@@ -1,7 +1,8 @@
 import {v2 as cloudinary} from "cloudinary"
 
 import fs from "fs"
-
+import dotenv from 'dotenv';
+dotenv.config();
           
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
@@ -18,15 +19,22 @@ const uploadOnCloudinary=async (localFilePath)=>{
             resource_type:"auto"
         })
         //file has been uploader
-        console.log("file is uploaded on cloudinary",response.url);
+        //console.log("file is uploaded on cloudinary",response.url);
+        if (fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+          }
+      
         return response
     } catch (error) {
-        fs.unlinkSync(localFilePath)  // remove the locally save temporay file 
-
+        if (fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+          }  // remove the locally save temporay file 
+        console.log(error);
         return null;
     }
 
 }
 
+console.log(process.env.CLOUDINARY_API_KEY)
 
 export {uploadOnCloudinary};
